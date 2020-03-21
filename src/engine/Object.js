@@ -39,10 +39,10 @@ export class GameObject {
         this.collision.transform.y -= dirVec.y;
     }
 
-    draw(ctx, debug) {
+    draw(ctx, debugConfig) {
         ctx.save();
         ctx.fillRect(this.transform.x, this.transform.y, this.transform.w, this.transform.h);
-        if (debug) {
+        if (debugConfig.debug && debugConfig.objectLabels) {
             ctx.fillStyle = '#FFF';
             ctx.fillText(this.id, this.transform.x + 20, this.transform.y + 20)
         }

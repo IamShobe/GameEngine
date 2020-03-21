@@ -46,7 +46,7 @@ export class Scene {
                 }
             });
             collidedO.forEach(c => {
-                while(object.collides(c)) {
+                while (object.collides(c)) {
                     object.undoMinimal(c);
                     c.undoMinimal(object);
                 }
@@ -58,24 +58,33 @@ export class Scene {
     draw(ctx) {
         ctx.save();
         this.camera.move(ctx);
+        const debugConfig = this.game.debugConfig;
         this.objects.forEach(object => {
             if (object.shouldRender(this.camera.view)) {
-                object.draw(ctx, this.game.debug)
+                object.draw(ctx, debugConfig)
             }
         });
 
-        if (this.game.debug) {
-            this.objects.forEach(object => {
-                if (object.shouldRender(this.camera.view)) {
-                    object.collision.draw(ctx);
-                }
-            });
-            this.space.draw(ctx);
-            ctx.strokeStyle = "#6405ff";
-            ctx.strokeRect(0, 0, this.width, this.height);
+        if (debugConfig.debug) {
+            if (debugConfig.collisionBoxes) {
+                this.objects.forEach(object => {
+                    if (object.shouldRender(this.camera.view)) {
+                        object.collision.draw(ctx);
+                    }
+                });
+            }
+            if (debugConfig.quadTree) {
+                this.space.draw(ctx);
+            }
+            if (debugConfig.worldBorder) {
+                ctx.strokeStyle = "#6405ff";
+                ctx.strokeRect(0, 0, this.width, this.height);
+            }
         }
         ctx.restore();
-        this.hud.draw(ctx);
+        if(debugConfig.debug && debugConfig.hud) {
+            this.hud.draw(ctx);
+        }
     }
 }
 

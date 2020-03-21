@@ -1,21 +1,76 @@
 import Input from "./Input";
 
+class DebugConfig {
+	defaultConfig = {
+		debug: true,
+		worldBorder: true,
+		collisionBoxes: true,
+		quadTree: true,
+		objectLabels: true,
+		hud: true,
+	};
+
+	constructor() {
+		this.currentConfig = {};
+	}
+
+	update(config) {
+		Object.keys(config).forEach(key => {
+			this.currentConfig[key] = config[key];
+		})
+	}
+
+	updateElem(elems) {
+		Object.keys(elems).forEach(key => {
+			this.currentConfig[key] = elems[key].checked;
+		});
+	}
+
+	getValue(key) {
+		return key in this.currentConfig ? this.currentConfig[key] : this.defaultConfig[key];
+	}
+
+	get debug() {
+		return this.getValue('debug');
+	}
+
+	get hud() {
+		return this.getValue('hud');
+	}
+
+	get worldBorder() {
+		return this.getValue('worldBorder');
+	}
+
+	get collisionBoxes() {
+		return this.getValue('collisionBoxes');
+	}
+
+	get quadTree() {
+		return this.getValue('quadTree');
+	}
+
+	get objectLabels() {
+		return this.getValue('objectLabels');
+	}
+}
+
 export class Game {
     constructor(element, width, height) {
-        this.canvas = element;
-        this.width = width;
-        this.height = height;
-        this.input = new Input(this);
-        this.ctx = this.canvas.getContext('2d');
-        this.trackTransforms(this.ctx);
-        this.loadedImages = {};
-        this.lastDrawTimestamp = null;
-        this.currentScene = null;
-        this.scenes = [];
-        this.initialize();
+		this.canvas = element;
+		this.width = width;
+		this.height = height;
+		this.input = new Input(this);
+		this.ctx = this.canvas.getContext('2d');
+		this.trackTransforms(this.ctx);
+		this.loadedImages = {};
+		this.lastDrawTimestamp = null;
+		this.currentScene = null;
+		this.scenes = [];
+		this.initialize();
 
-        this.debug = true;
-    }
+		this.debugConfig = new DebugConfig();
+	}
 
     initialize() {
         this.canvas.width = this.width;
@@ -41,12 +96,12 @@ export class Game {
         return Promise.all(images.map(image => this.loadImage(image)));
     }
 
-    run(delta=0) {
+    async run(delta=0) {
         this.currentScene.update(delta);
         window.requestAnimationFrame(this.draw.bind(this));
     }
 
-    draw(timestamp) {
+    async draw(timestamp) {
         if (!this.lastDrawTimestamp) this.lastDrawTimestamp = timestamp;
         const delta = timestamp - this.lastDrawTimestamp;
         this.lastDrawTimestamp = timestamp;
@@ -57,7 +112,7 @@ export class Game {
 
         this.currentScene.draw(this.ctx, delta);
         this.ctx.restore();
-        this.run(delta);
+        await this.run(delta);
     }
 
     trackTransforms(ctx){

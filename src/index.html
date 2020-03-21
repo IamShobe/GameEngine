@@ -1,12 +1,47 @@
 <!DOCTYPE HTML>
 <html lang="en">
-    <head>
-        <title>Game</title>
-        <style>
+<head>
+    <title>Game</title>
+    <style>
+        #wrapper {
+            display: flex;
+        }
 
-        </style>
-    </head>
-    <body>
-        <canvas id="canvas"></canvas>
-    </body>
+        #settings {
+            display: flex;
+            flex-direction: column;
+        }
+
+    </style>
+</head>
+<body>
+<div id="wrapper">
+    <canvas id="canvas"></canvas>
+    <div id="settings">
+        <div class="option">
+            <input type="checkbox" id="debugMode" onclick="updateSettings()" checked>
+            Debug
+        </div>
+        <div class="option">
+            <input type="checkbox" id="collisionBoxes" onclick="updateSettings()" checked> Collision boxes
+        </div>
+        <div class="option">
+            <input type="checkbox" id="labels" onclick="updateSettings()" checked>
+            Object Labels
+        </div>
+        <div class="option">
+            <input type="checkbox" id="worldBorder" onclick="updateSettings()" checked>
+            World Border
+        </div>
+        <div class="option">
+            <input type="checkbox" id="quadTree" onclick="updateSettings()" checked>
+            Quad Tree
+        </div>
+        <div class="option">
+            <input type="checkbox" id="hud" onclick="updateSettings()" checked>
+            HUD
+        </div>
+    </div>
+</div>
+</body>
 </html>

@@ -55,9 +55,9 @@ export class RectCollision extends Collision {
 
     collides(x, y) {
         return (
-            ((x >= this.transform.x) && (x <= (this.transform.x + this.transform.w)))
+            ((x > this.transform.x) && (x < (this.transform.x + this.transform.w)))
             &&
-            ((y >= this.transform.y) && (y <= (this.transform.y + this.transform.h)))
+            ((y > this.transform.y) && (y < (this.transform.y + this.transform.h)))
         )
     }
 
@@ -85,7 +85,7 @@ export class CircleCollision extends Collision {
                     +
                     Math.pow(y - this.y, 2)
                 )
-            ) <= this.r
+            ) < this.r
         )
     }
 
