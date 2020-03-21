@@ -14,39 +14,43 @@ export class Player extends GameObject {
         }
     }
 
+    onKeyUP = async (keyboard) => {
+        switch (keyboard.event.code) {
+            case 'KeyA':
+                this.controls.a = false;
+                break;
+            case 'KeyS':
+                this.controls.s = false;
+                break;
+            case 'KeyD':
+                this.controls.d = false;
+                break;
+            case 'KeyW':
+                this.controls.w = false;
+                break
+        }
+    };
+
+    onKeyDown = async (keyboard) => {
+        switch (keyboard.event.code) {
+            case 'KeyA':
+                this.controls.a = true;
+                break;
+            case 'KeyS':
+                this.controls.s = true;
+                break;
+            case 'KeyD':
+                this.controls.d = true;
+                break;
+            case 'KeyW':
+                this.controls.w = true;
+                break
+        }
+    };
+
     bindEvents() {
-        this.game.input.keyboard.bind('keyup', (keyboard) => {
-            switch (keyboard.event.code) {
-                case 'KeyA':
-                    this.controls.a = false;
-                    break;
-                case 'KeyS':
-                    this.controls.s = false;
-                    break;
-                case 'KeyD':
-                    this.controls.d = false;
-                    break;
-                case 'KeyW':
-                    this.controls.w = false;
-                    break
-            }
-        });
-        this.game.input.keyboard.bind('keydown', (keyboard) => {
-            switch (keyboard.event.code) {
-                case 'KeyA':
-                    this.controls.a = true;
-                    break;
-                case 'KeyS':
-                    this.controls.s = true;
-                    break;
-                case 'KeyD':
-                    this.controls.d = true;
-                    break;
-                case 'KeyW':
-                    this.controls.w = true;
-                    break
-            }
-        });
+        this.game.input.keyboard.bind('keyup', this.onKeyUP);
+        this.game.input.keyboard.bind('keydown', this.onKeyDown);
     }
 
     update(delta) {
@@ -54,7 +58,7 @@ export class Player extends GameObject {
           x: this.controls.a * -speed + this.controls.d * speed,
           y: this.controls.w * -speed + this.controls.s * speed,
         };
-        super.update(delta);
+        return super.update(delta);
     }
 
 }

@@ -28,14 +28,16 @@ export class Scene {
         this.hud = new HUD(game);
     }
 
-    update(delta) {
+    async update(delta) {
         this.fps = Math.floor(1000 / delta);
         delete this.space;
         this.space = new CollisionSpace(this);
-        this.objects.forEach(object => {
-            object.update(delta);
-            this.space.add(object);
-        });
+        await Promise.all(this.objects.map(
+            object => object.update(delta).then(obj => {
+                this.space.add(obj);
+            })
+        ));
+
         this.objects.forEach(object => {
             const potentialCollides = this.space.getPotentialCollisions(object);
             const collidedO = [];
@@ -47,43 +49,36 @@ export class Scene {
             });
             collidedO.forEach(c => {
                 while (object.collides(c)) {
-                    object.undoMinimal(c);
-                    c.undoMinimal(object);
+                    object.undoMinimal(c); // move object back
+                    c.undoMinimal(object); // move c back
                 }
             });
         });
-
     }
 
-    draw(ctx) {
+    async _draw(ctx, debugConfig) {
+        if (!debugConfig.debug || !debugConfig.worldBorder) return;
+        ctx.strokeStyle = "#6405ff";
+        ctx.strokeRect(0, 0, this.width, this.height);
+    }
+
+    async draw(ctx) {
         ctx.save();
         this.camera.move(ctx);
         const debugConfig = this.game.debugConfig;
-        this.objects.forEach(object => {
-            if (object.shouldRender(this.camera.view)) {
-                object.draw(ctx, debugConfig)
-            }
-        });
+        await Promise.all(
+            this.objects.map(object =>
+                object.shouldRender(this.camera.view) && object.draw(ctx, debugConfig)
+            )
+        );
 
-        if (debugConfig.debug) {
-            if (debugConfig.collisionBoxes) {
-                this.objects.forEach(object => {
-                    if (object.shouldRender(this.camera.view)) {
-                        object.collision.draw(ctx);
-                    }
-                });
-            }
-            if (debugConfig.quadTree) {
-                this.space.draw(ctx);
-            }
-            if (debugConfig.worldBorder) {
-                ctx.strokeStyle = "#6405ff";
-                ctx.strokeRect(0, 0, this.width, this.height);
-            }
-        }
+        await this.space.draw(ctx, debugConfig);
+        await this._draw(ctx, debugConfig);
         ctx.restore();
-        if(debugConfig.debug && debugConfig.hud) {
-            this.hud.draw(ctx);
+
+        // paint without camera view relation
+        if (debugConfig.debug && debugConfig.hud) {
+            await this.hud.draw(ctx, debugConfig);
         }
     }
 }

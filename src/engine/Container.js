@@ -43,7 +43,8 @@ export class Container {
         return this;
     }
 
-    draw(ctx) {
+    async draw(ctx) {
+        ctx.save();
         let posX = this.x;
         let posY = this.y;
         const {w, h} = this.getTransform(ctx);
@@ -58,11 +59,13 @@ export class Container {
         ctx.strokeRect(posX, posY, w, h);
         posX += this.padding;
         posY += this.padding;
-        this.components.forEach(comp => {
-            comp.draw(ctx, posX, posY);
+        await Promise.all(this.components.map(comp => {
+            const toRet = comp.draw(ctx, posX, posY);
             const {w, h} = comp.getTransform(ctx);
             if(this.direction === 'column') posY += h;
             if(this.direction === 'row') posX += w;
-        });
+            return toRet;
+        }));
+        ctx.restore();
     }
 }

@@ -97,7 +97,7 @@ export class Game {
     }
 
     async run(delta=0) {
-        this.currentScene.update(delta);
+        await this.currentScene.update(delta);
         window.requestAnimationFrame(this.draw.bind(this));
     }
 
@@ -110,7 +110,7 @@ export class Game {
 		this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.currentScene.draw(this.ctx, delta);
+        await this.currentScene.draw(this.ctx, delta);
         this.ctx.restore();
         await this.run(delta);
     }

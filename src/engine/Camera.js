@@ -18,17 +18,17 @@ export class Camera {
         this.game.input.mouse.bind('wheel', this.onWheel);
     }
 
-    onDragStart = (mouse) => {
+    onDragStart = async (mouse) => {
         const dragX = mouse.dragStart.x;
         const dragY = mouse.dragStart.y;
         this.dragStart = this.transformedPoint(dragX, dragY);
     };
 
-    onDragStop = (mouse) => {
+    onDragStop = async (mouse) => {
         this.dragStart = null;
     };
 
-    onDrag = (mouse) => {
+    onDrag = async (mouse) => {
         const x = mouse.pos.x;
         const y = mouse.pos.y;
         const pt = this.transformedPoint(x, y);
@@ -38,7 +38,7 @@ export class Camera {
         );
     };
 
-    onWheel = (mouse) => {
+    onWheel = async (mouse) => {
         const x = mouse.pos.x;
         const y = mouse.pos.y;
         const amount = mouse.wheelDelta;

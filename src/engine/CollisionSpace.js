@@ -39,10 +39,10 @@ class Quad extends RectCollision {
     }
 
 
-    draw(ctx) {
+    async draw(ctx) {
         ctx.strokeStyle = "#5bff39";
         ctx.strokeRect(this.x, this.y, this.width, this.height);
-        this.quads.forEach(quad => quad.draw(ctx));
+        await Promise.all([this.quads.map(quad => quad.draw(ctx))]);
     }
 }
 
@@ -79,7 +79,8 @@ export class CollisionSpace {
         this.quad.add(obj);
     }
 
-    draw(ctx) {
-        this.quad.draw(ctx)
+    async draw(ctx, debugConfig) {
+        if (!debugConfig.debug || !debugConfig.quadTree) return;
+        await this.quad.draw(ctx)
     }
 }

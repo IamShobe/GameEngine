@@ -39,21 +39,29 @@ export class GameObject {
         this.collision.transform.y -= dirVec.y;
     }
 
-    draw(ctx, debugConfig) {
+    async draw(ctx, debugConfig) {
         ctx.save();
         ctx.fillRect(this.transform.x, this.transform.y, this.transform.w, this.transform.h);
-        if (debugConfig.debug && debugConfig.objectLabels) {
-            ctx.fillStyle = '#FFF';
-            ctx.fillText(this.id, this.transform.x + 20, this.transform.y + 20)
+        if (debugConfig.debug) {
+            if(debugConfig.objectLabels) {
+                ctx.save();
+                ctx.fillStyle = '#FFF';
+                ctx.fillText(this.id, this.transform.x + 20, this.transform.y + 20);
+                ctx.restore();
+            }
+            if(debugConfig.collisionBoxes) {
+                await this.collision.draw(ctx, debugConfig);
+            }
         }
         ctx.restore();
     }
 
-    update(delta) {
+    async update(delta) {
         this.transform.x += this.moveVector.x;
         this.collision.transform.x += this.moveVector.x;
         this.transform.y += this.moveVector.y;
         this.collision.transform.y += this.moveVector.y;
+        return this;
     }
 }
 

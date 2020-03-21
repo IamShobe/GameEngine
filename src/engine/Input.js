@@ -10,8 +10,9 @@ class InputType {
         }, {});
     }
 
-    emitEvent(event, evt) {
-        this._events[event].forEach(callback => callback(this));
+    async emitEvent(event, evt) {
+        const promises = this._events[event].map(callback => callback(this));
+        await Promise.all(promises);
     }
 
     bind(event, callback) {
@@ -65,45 +66,51 @@ export class Input {
         this.mouse.pos.y = evt.offsetY || (evt.pageY - this.game.canvas.offsetTop);
     }
 
-    onmousedown = (evt) => {
+    onmousedown = async (evt) => {
         this.setMousePos(evt);
         this.mouse.isDragging = false;
         this.mouse.dragStart = {
             x: this.mouse.pos.x,
             y: this.mouse.pos.y
         };
-        this.mouse.emitEvent('dragStart', evt);
-        this.mouse.emitEvent('down', evt);
+        await Promise.all([
+            this.mouse.emitEvent('dragStart', evt),
+            this.mouse.emitEvent('down', evt)
+        ])
     };
 
-    onmousemove = (evt) => {
+    onmousemove = async (evt) => {
         this.setMousePos(evt);
         this.mouse.isDragging = true;
-        this.mouse.emitEvent('move', evt);
+        const promises = [];
+        promises.push(this.mouse.emitEvent('move', evt));
         if (this.mouse.dragStart) {
-            this.mouse.emitEvent('drag', evt);
+            promises.push(this.mouse.emitEvent('drag', evt));
         }
+        await Promise.all(promises);
     };
 
-    onmouseup = (evt) => {
+    onmouseup = async (evt) => {
         this.mouse.isDragging = false;
         this.mouse.dragStart = null;
-        this.mouse.emitEvent('dragStop', evt);
-        this.mouse.emitEvent('up', evt);
+        await Promise.all([
+            this.mouse.emitEvent('dragStop', evt),
+            this.mouse.emitEvent('up', evt)
+        ])
     };
 
-    onmousewheel = (evt) => {
+    onmousewheel = async (evt) => {
         this.mouse.wheelDelta = evt.wheelDelta ? evt.wheelDelta / 40 : evt.detail ? -evt.detail : 0;
-        this.mouse.emitEvent('wheel', evt);
+        await this.mouse.emitEvent('wheel', evt);
     };
 
-    onkeydown = (evt) => {
+    onkeydown = async (evt) => {
         this.keyboard.event = evt;
-        this.keyboard.emitEvent('keydown', evt);
+        await this.keyboard.emitEvent('keydown', evt);
     };
-    onkeyup = (evt) => {
+    onkeyup = async (evt) => {
         this.keyboard.event = evt;
-        this.keyboard.emitEvent('keyup', evt);
+        await this.keyboard.emitEvent('keyup', evt);
     };
 
     bindEvents() {
