@@ -21,7 +21,7 @@ export class Collision {
         return [topLeft, topRight, bottomRight, bottomLeft].some(point => this.collides(point.x, point.y));
     }
 
-    async draw(ctx) {
+    draw(ctx) {
         ctx.strokeStyle = "#FF0000";
     }
 }
@@ -61,9 +61,9 @@ export class RectCollision extends Collision {
         )
     }
 
-    async draw(ctx) {
+    draw(ctx) {
         ctx.save();
-        await super.draw(ctx);
+        super.draw(ctx);
         ctx.strokeRect(this.transform.x, this.transform.y, this.transform.w, this.transform.h);
         ctx.restore();
     }
@@ -89,9 +89,9 @@ export class CircleCollision extends Collision {
         )
     }
 
-    async draw(ctx) {
+    draw(ctx) {
         ctx.save();
-        await super.draw(ctx);
+        super.draw(ctx);
         ctx.beginPath();
         ctx.arc(this.x, this.y, 50, 0, 2 * Math.PI);
         ctx.stroke();

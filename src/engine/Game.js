@@ -96,12 +96,12 @@ export class Game {
         return Promise.all(images.map(image => this.loadImage(image)));
     }
 
-    async run(delta=0) {
-        await this.currentScene.update(delta);
+    run(delta=0) {
+        this.currentScene.update(delta);
         window.requestAnimationFrame(this.draw.bind(this));
     }
 
-    async draw(timestamp) {
+    draw(timestamp) {
         if (!this.lastDrawTimestamp) this.lastDrawTimestamp = timestamp;
         const delta = timestamp - this.lastDrawTimestamp;
         this.lastDrawTimestamp = timestamp;
@@ -110,9 +110,9 @@ export class Game {
 		this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        await this.currentScene.draw(this.ctx, delta);
+        this.currentScene.draw(this.ctx, delta);
         this.ctx.restore();
-        await this.run(delta);
+        this.run(delta);
     }
 
     trackTransforms(ctx){

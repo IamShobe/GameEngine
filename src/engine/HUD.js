@@ -6,12 +6,12 @@ export class HUD {
         this.game = game;
     }
 
-    async draw(ctx) {
+    draw(ctx) {
         const {x, y, zoom} = this.game.currentScene.camera.view;
         const mPos = this.game.currentScene.camera.getPoint(this.game.input.mouse.pos);
         const fps = this.game.currentScene.fps;
 
-        await new Container(0, this.game.height, {
+        new Container(0, this.game.height, {
             width: 200,
             alignH: 'bottom',
             direction: 'column'

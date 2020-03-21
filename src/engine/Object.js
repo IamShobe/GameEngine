@@ -39,7 +39,7 @@ export class GameObject {
         this.collision.transform.y -= dirVec.y;
     }
 
-    async draw(ctx, debugConfig) {
+    draw(ctx, debugConfig) {
         ctx.save();
         ctx.fillRect(this.transform.x, this.transform.y, this.transform.w, this.transform.h);
         if (debugConfig.debug) {
@@ -50,13 +50,13 @@ export class GameObject {
                 ctx.restore();
             }
             if(debugConfig.collisionBoxes) {
-                await this.collision.draw(ctx, debugConfig);
+                this.collision.draw(ctx, debugConfig);
             }
         }
         ctx.restore();
     }
 
-    async update(delta) {
+    update(delta) {
         this.transform.x += this.moveVector.x;
         this.collision.transform.x += this.moveVector.x;
         this.transform.y += this.moveVector.y;

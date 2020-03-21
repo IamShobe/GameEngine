@@ -36,13 +36,14 @@ class Quad extends RectCollision {
         else if (!this.isLeaf) {
             this.addToQuad(obj);
         }
+        return this;
     }
 
 
-    async draw(ctx) {
+    draw(ctx) {
         ctx.strokeStyle = "#5bff39";
         ctx.strokeRect(this.x, this.y, this.width, this.height);
-        await Promise.all([this.quads.map(quad => quad.draw(ctx))]);
+        this.quads.forEach(quad => quad.draw(ctx));
     }
 }
 
@@ -79,8 +80,8 @@ export class CollisionSpace {
         this.quad.add(obj);
     }
 
-    async draw(ctx, debugConfig) {
+    draw(ctx, debugConfig) {
         if (!debugConfig.debug || !debugConfig.quadTree) return;
-        await this.quad.draw(ctx)
+        this.quad.draw(ctx)
     }
 }

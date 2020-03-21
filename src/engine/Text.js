@@ -36,7 +36,7 @@ export class Text {
         }
     }
 
-    async draw(ctx, offsetX, offsetY) {
+    draw(ctx, offsetX, offsetY) {
         ctx.save();
         this.configure(ctx);
         const measure = ctx.measureText(this.text);

@@ -28,16 +28,18 @@ export class Scene {
         this.hud = new HUD(game);
     }
 
-    async update(delta) {
+    update(delta) {
         this.fps = Math.floor(1000 / delta);
         delete this.space;
         this.space = new CollisionSpace(this);
-        await Promise.all(this.objects.map(
-            object => object.update(delta).then(obj => {
-                this.space.add(obj);
-            })
-        ));
+        // update all objects
+        this.objects.forEach(
+            object => object.update(delta)
+        );
+        // add objects to quad tree
+        this.objects.forEach(obj => this.space.add(obj));
 
+        // check collisions
         this.objects.forEach(object => {
             const potentialCollides = this.space.getPotentialCollisions(object);
             const collidedO = [];
@@ -56,29 +58,27 @@ export class Scene {
         });
     }
 
-    async _draw(ctx, debugConfig) {
+    _draw(ctx, debugConfig) {
         if (!debugConfig.debug || !debugConfig.worldBorder) return;
         ctx.strokeStyle = "#6405ff";
         ctx.strokeRect(0, 0, this.width, this.height);
     }
 
-    async draw(ctx) {
+    draw(ctx) {
         ctx.save();
         this.camera.move(ctx);
         const debugConfig = this.game.debugConfig;
-        await Promise.all(
-            this.objects.map(object =>
-                object.shouldRender(this.camera.view) && object.draw(ctx, debugConfig)
-            )
+        this.objects.forEach(object =>
+            object.shouldRender(this.camera.view) && object.draw(ctx, debugConfig)
         );
 
-        await this.space.draw(ctx, debugConfig);
-        await this._draw(ctx, debugConfig);
+        this.space.draw(ctx, debugConfig);
+        this._draw(ctx, debugConfig);
         ctx.restore();
 
         // paint without camera view relation
         if (debugConfig.debug && debugConfig.hud) {
-            await this.hud.draw(ctx, debugConfig);
+            this.hud.draw(ctx, debugConfig);
         }
     }
 }
