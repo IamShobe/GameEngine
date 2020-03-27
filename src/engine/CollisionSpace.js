@@ -22,6 +22,40 @@ class Quad extends RectCollision {
         });
     }
 
+    isInside(x, y) {
+        return (
+            (x >= this.x && x <= (this.x + this.width))
+            &&
+            (y >= this.y && y <= (this.y + this.height))
+        )
+    }
+
+    isEmpty(x, y) {
+        if(!this.isInside(x, y)) {
+            return true;
+        }
+
+        if(!this.isLeaf) {
+            const xPositions = [this.x, this.x + this.width / 2, this.x + this.width];
+            const yPositions = [this.y, this.y + this.height / 2, this.y + this.height];
+            const xQuad = _.sortedIndex(xPositions, x);  // should be either 1 or 2
+            const yQuad = _.sortedIndex(yPositions, y);  // should be either 1 or 2
+
+            let quadIndex = undefined;
+            if (xQuad === 1 && yQuad === 1) {
+                quadIndex = 0;
+            } else if (xQuad === 2 && yQuad === 1) {
+                quadIndex = 1;
+            } else if (xQuad === 1 && yQuad === 2) {
+                quadIndex = 2;
+            } else if (xQuad === 2 && yQuad === 2) {
+                quadIndex = 3
+            }
+            return this.quads[quadIndex].isEmpty(x, y);
+        }
+        return !this.objects.some(obj => obj.pointCollides(x, y));
+    }
+
     add(obj) {
         this.objects.push(obj);
         if (this.isLeaf && this.objects.length === MAX_IN_QUAD) {
@@ -37,6 +71,13 @@ class Quad extends RectCollision {
             this.addToQuad(obj);
         }
         return this;
+    }
+
+    remove(obj) {
+        _.remove(this.objects, o => o === obj);
+        this.quads.forEach(q => {
+            if (q.objects.includes(obj)) q.remove(obj);
+        });
     }
 
 
@@ -76,7 +117,20 @@ export class CollisionSpace {
         return objects;
     }
 
+    isEmpty(x, y) {
+        return this.quad.isEmpty(x, y);
+    }
+
     add(obj) {
+        this.quad.add(obj);
+    }
+
+    remove(obj) {
+        this.quad.remove(obj);
+    }
+
+    update(obj) {
+        this.quad.remove(obj);
         this.quad.add(obj);
     }
 

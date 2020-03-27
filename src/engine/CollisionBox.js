@@ -1,14 +1,43 @@
 export class Collision {
     constructor() {
+        this.transform = {};
+        this.transformStack = [];
+    }
 
+    save() {
+        this.transformStack.push({...this.transform});
+    }
+
+    restore() {
+        this.transform = this.transformStack.pop();
+    }
+
+    commit() {
+        this.transformStack.pop();
     }
 
     collides(x, y) {
         return false;
     }
 
+    otherCollides(collision, recursed=false) {
+        return false;
+    }
+
     isInQuad(quad) {
         return false
+    }
+
+    newFromAdvancement(props) {
+        return new Collision();
+    }
+
+    getYOfX(x, side) {
+        return 0;
+    }
+
+    getXOfY(y, side) {
+        return 0;
     }
 
     rectCollides(collision) {
@@ -48,10 +77,35 @@ export class RectCollision extends Collision {
         return this.transform.y;
     }
 
+    getXOfY(y, side) {
+        switch (side) {
+            case "left":
+                return this.x;
+            case "right":
+                return this.x + this.width;
+        }
+    }
+
+    getYOfX(x, side) {
+        switch (side) {
+            case "top":
+                return this.y;
+            case "bottom":
+                return this.y + this.height;
+        }
+    }
+
     isInQuad(quad) {
         return quad.rectCollides(this) || this.rectCollides(quad);
     }
 
+    otherCollides(collision, recurse=false) {
+        return collision.rectCollides(this) || !recurse && collision.otherCollides(this, true);
+    }
+
+    newFromAdvancement({x, y}) {
+        return new RectCollision(this.transform.x + x, this.transform.y + y, this.transform.w, this.transform.h);
+    }
 
     collides(x, y) {
         return (

@@ -32,30 +32,25 @@ export class Scene {
         this.fps = Math.floor(1000 / delta);
         delete this.space;
         this.space = new CollisionSpace(this);
+        // add objects to quad tree
+        this.objects.forEach(obj => this.space.add(obj));
+
         // update all objects
         this.objects.forEach(
             object => object.update(delta)
         );
-        // add objects to quad tree
-        this.objects.forEach(obj => this.space.add(obj));
 
-        // check collisions
-        this.objects.forEach(object => {
-            const potentialCollides = this.space.getPotentialCollisions(object);
-            const collidedO = [];
-            potentialCollides.forEach(collides => {
-                // check collisions with object
-                if (collides.collides(object)) {
-                    collidedO.push(collides);
-                }
-            });
-            collidedO.forEach(c => {
-                while (object.collides(c)) {
-                    object.undoMinimal(c); // move object back
-                    c.undoMinimal(object); // move c back
-                }
-            });
-        });
+        // // check collisions
+        // this.objects.forEach(object => {
+        //     const potentialCollides = this.space.getPotentialCollisions(object);
+        //     // const collidedO = [];
+        //     // potentialCollides.forEach(collides => {
+        //     //     // check collisions with object
+        //     //     if (collides.collides(object)) {
+        //     //         collidedO.push(collides);
+        //     //     }
+        //     // });
+        // });
     }
 
     _draw(ctx, debugConfig) {

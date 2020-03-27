@@ -10,6 +10,7 @@ export class HUD {
         const {x, y, zoom} = this.game.currentScene.camera.view;
         const mPos = this.game.currentScene.camera.getPoint(this.game.input.mouse.pos);
         const fps = this.game.currentScene.fps;
+        const vec = this.game.currentScene.player.moveVector;
 
         new Container(0, this.game.height, {
             width: 200,
@@ -20,6 +21,7 @@ export class HUD {
             new Text(`Pos: ${x}, ${y}`),
             new Text(`mPos: ${mPos.x}, ${mPos.y}`),
             new Text(`Zoom: ${zoom}`),
+            new Text(`Player Speed: ${vec.x}, ${vec.y}`),
         ]).draw(ctx);
     }
 }

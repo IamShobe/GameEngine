@@ -1,6 +1,6 @@
 import GameObject from "./Object";
 
-const speed = 5;
+const speed = 6;
 
 export class Player extends GameObject {
     constructor(game, x, y) {
@@ -53,12 +53,11 @@ export class Player extends GameObject {
         this.game.input.keyboard.bind('keydown', this.onKeyDown);
     }
 
-    update(delta) {
-        this.moveVector = {
-          x: this.controls.a * -speed + this.controls.d * speed,
-          y: this.controls.w * -speed + this.controls.s * speed,
-        };
-        return super.update(delta);
+    get moveVector() {
+        return {
+            x: this.controls.a * -speed + this.controls.d * speed,
+            y: this.controls.w * -speed + this.controls.s * speed,
+        }
     }
 
 }
